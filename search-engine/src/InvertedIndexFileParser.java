@@ -7,9 +7,9 @@ import java.util.List;
 public class InvertedIndexFileParser implements ExceptionHandler {
     private int positionInFile = 1;
     private String currentFile;
-    private WordCleaner wordCleaner = new WordCleaner();
+    private final WordCleaner wordCleaner = new WordCleaner();
 
-    public void readFile(File file, InvertedIndexReader invertedIndexReader) {
+    public void readFile(File file, InvertedIndexReaderCallback invertedIndexReader) {
         try {
             setCurrentFileName(file.getName());
             Files.lines(Paths.get(file.getAbsolutePath())).forEachOrdered(line -> getIndicesFromLineRead(line, invertedIndexReader));
@@ -23,7 +23,7 @@ public class InvertedIndexFileParser implements ExceptionHandler {
         this.currentFile = fileName;
     }
 
-    private void getIndicesFromLineRead(String line, InvertedIndexReader invertedIndexReader) {
+    private void getIndicesFromLineRead(String line, InvertedIndexReaderCallback invertedIndexReader) {
         List<Index> indices = new LinkedList<>();
         String[] wordsInLine = getEachWord(line);
         for (String word : wordsInLine) {

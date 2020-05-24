@@ -1,3 +1,9 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,34 +60,39 @@ public class InvertedIndex {
         }
     }
 
-    public void print() {
-        for (String word : invertedIndex.keySet()) {
-            System.out.println("word: " + word);
-            Map<String, List<Integer>> fileAndPositionMap = invertedIndex.get(word);
-            printFileAndPositions(fileAndPositionMap);
-            System.out.println();
-        }
+    public void write(String fileName) {
+        Path path = Paths.get(fileName);
+        writeIndex(fileName, path);
     }
 
-    private void printFileAndPositions(Map<String, List<Integer>> fileAndPositions) {
-        for (String file : fileAndPositions.keySet()) {
-            System.out.print("{ ");
-            System.out.print(file + ", ");
-            System.out.print("[");
-            List<Integer> positions = fileAndPositions.get(file);
-            printPositions(positions);
-            System.out.print("]");
-            System.out.print(" },");
-            System.out.println();
-        }
-    }
-
-    private void printPositions(List<Integer> positions) {
-        for (int i = 0; i < positions.size(); i++) {
-            System.out.print(positions.get(i));
-            if (i + 1 != positions.size()) {
-                System.out.print(",");
+    private void writeIndex(String fileName, Path path) {
+        try (BufferedWriter outputMap = Files.newBufferedWriter(path, StandardCharsets.UTF_8);){
+            for (String word : invertedIndex.keySet()) {
+                outputMap.write(word);
+                outputMap.newLine();
+                writeFilesAndPositions(outputMap, word);
+                outputMap.newLine();
             }
+            outputMap.newLine();
+
+        } catch (IOException e) {
+            System.out.println("Your text file " + fileName + " cannot be accessed.");
+
+        }
+    }
+
+    private void writeFilesAndPositions(BufferedWriter outputMap, String word) throws IOException {
+        for (String files : invertedIndex.get(word).keySet()) {
+            outputMap.write("\"" + files + "\"");
+            writePositions(outputMap, word, files);
+            outputMap.newLine();
+        }
+    }
+
+    private void writePositions(BufferedWriter outputMap, String word, String files) throws IOException {
+        for (Integer position : invertedIndex.get(word).get(files)) {
+            outputMap.write(", ");
+            outputMap.write(position.toString());
         }
     }
 }
