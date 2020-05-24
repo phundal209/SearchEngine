@@ -90,9 +90,13 @@ public class InvertedIndex {
     }
 
     private void writePositions(BufferedWriter outputMap, String word, String files) throws IOException {
+        int pos = 1;
         for (Integer position : invertedIndex.get(word).get(files)) {
-            outputMap.write(", ");
             outputMap.write(position.toString());
+            if (pos != invertedIndex.get(word).get(files).size()) {
+                outputMap.write(", ");
+                pos++;
+            }
         }
     }
 }

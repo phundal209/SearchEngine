@@ -6,12 +6,12 @@ import java.util.List;
 
 public class InvertedIndexFileParser implements ExceptionHandler {
     private int positionInFile = 1;
-    private String currentFile;
+    private String currentFilePath;
     private final WordCleaner wordCleaner = new WordCleaner();
 
     public void readFile(File file, InvertedIndexReaderCallback invertedIndexReader) {
         try {
-            setCurrentFileName(file.getName());
+            setCurrentFilePath(file.getAbsolutePath());
             Files.lines(Paths.get(file.getAbsolutePath())).forEachOrdered(line -> getIndicesFromLineRead(line, invertedIndexReader));
         } catch (IOException e) {
             displayException("The file " + file.getName() + " was not able to be read." +
@@ -19,8 +19,8 @@ public class InvertedIndexFileParser implements ExceptionHandler {
         }
     }
 
-    private void setCurrentFileName(String fileName) {
-        this.currentFile = fileName;
+    private void setCurrentFilePath(String fileName) {
+        this.currentFilePath = fileName;
     }
 
     private void getIndicesFromLineRead(String line, InvertedIndexReaderCallback invertedIndexReader) {
@@ -40,7 +40,7 @@ public class InvertedIndexFileParser implements ExceptionHandler {
 
     private void insertAndUpdate(String cleanWord, List<Index> indices) {
         if (cleanWord != null) {
-            indices.add(new Index(cleanWord, currentFile, positionInFile));
+            indices.add(new Index(cleanWord, currentFilePath, positionInFile));
             positionInFile++;
         }
     }
