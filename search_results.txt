@@ -1,0 +1,5 @@
+guten
+[model.SearchResult{ filePath='/Users/phundal/SearchEngine/extended/pg11.txt', frequency= 22, position=m46 }]internet
+[]path
+[]guten internet path
+[model.SearchResult{ filePath='/Users/phundal/SearchEngine/extended/pg11.txt', frequency= 22, position=m46 }]

@@ -1,19 +1,21 @@
+import model.Index;
+import model.SearchResult;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class InvertedIndex {
-    private Map<String, Map<String, List<Integer>>> invertedIndex = new TreeMap<>();
+    private final TreeMap<String, Map<String, List<Integer>>> invertedIndex;
     private static InvertedIndex instance = null;
 
-    private InvertedIndex() {}
+    private InvertedIndex() {
+        this.invertedIndex = new TreeMap<>();
+    }
 
     public synchronized static InvertedIndex getInstance() {
         if (instance == null) {
@@ -60,13 +62,56 @@ public class InvertedIndex {
         }
     }
 
+    public List<SearchResult> search(List<String> queries) {
+        Map<String, SearchResult> mapOfResultPerFile = new HashMap<>();
+        for (String query : queries) {
+            searchIndexForQuery(mapOfResultPerFile, query);
+        }
+        List<SearchResult> results = new ArrayList<>(mapOfResultPerFile.values());
+        Collections.sort(results);
+        return results;
+    }
+
+    private void searchIndexForQuery(Map<String, SearchResult> mapOfResultPerFile, String query) {
+        for (String searchWord : invertedIndex.tailMap(query).keySet()) {
+            if (searchWord.startsWith(query)) {
+                Map<String, List<Integer>> filesAndPositionsOfSearchWord = invertedIndex.get(searchWord);
+                getResultsPerFile(mapOfResultPerFile, filesAndPositionsOfSearchWord);
+            }
+        }
+    }
+
+    private void getResultsPerFile(Map<String, SearchResult> mapOfResultPerFile,
+                                   Map<String, List<Integer>> filesAndPositionsOfSearchWord) {
+        for (String filePath : filesAndPositionsOfSearchWord.keySet()) {
+            int frequency = filesAndPositionsOfSearchWord.get(filePath).size();
+            int position = filesAndPositionsOfSearchWord.get(filePath).get(0);
+            if (!mapOfResultPerFile.containsKey(filePath)) {
+                SearchResult searchResult = createSearchResult(filePath, frequency, position);
+                mapOfResultPerFile.put(filePath, searchResult);
+            } else {
+                SearchResult result = mapOfResultPerFile.get(filePath);
+                result.updatePosition(position);
+                result.updateFrequency(frequency);
+                mapOfResultPerFile.put(filePath, result);
+            }
+        }
+    }
+
+    private SearchResult createSearchResult(String filePath, int frequency, int position) {
+        return new SearchResult(
+                filePath,
+                frequency,
+                position);
+    }
+
     public void write(String fileName) {
         Path path = Paths.get(fileName);
         writeIndex(fileName, path);
     }
 
     private void writeIndex(String fileName, Path path) {
-        try (BufferedWriter outputMap = Files.newBufferedWriter(path, StandardCharsets.UTF_8);){
+        try (BufferedWriter outputMap = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             for (String word : invertedIndex.keySet()) {
                 outputMap.write(word);
                 outputMap.newLine();
@@ -77,7 +122,6 @@ public class InvertedIndex {
 
         } catch (IOException e) {
             System.out.println("Your text file " + fileName + " cannot be accessed.");
-
         }
     }
 

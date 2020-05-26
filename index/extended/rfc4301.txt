@@ -637,7 +637,7 @@ RFC 4301              Security Architecture for IP         December 2005
    recognition of this common usage requirement.
 
    For an SA used to carry unicast traffic, the Security Parameters
-   Index (SPI) by itself suffices to specify an SA.  (For information on
+   model.Index (SPI) by itself suffices to specify an SA.  (For information on
    the SPI, see Appendix A and the AH and ESP specifications [Ken05b,
    Ken05a].)  However, as a local matter, an implementation may choose
    to use the SPI in conjunction with the IPsec protocol type (AH or
@@ -1980,7 +1980,7 @@ RFC 4301              Security Architecture for IP         December 2005
 
    The following data items MUST be in the SAD:
 
-    o Security Parameter Index (SPI): a 32-bit value selected by the
+    o Security Parameter model.Index (SPI): a 32-bit value selected by the
       receiving end of an SA to uniquely identify the SA.  In an SAD
       entry for an outbound SA, the SPI is used to construct the
       packet's AH or ESP header.  In an SAD entry for an inbound SA, the
@@ -4341,7 +4341,7 @@ RFC 4301              Security Architecture for IP         December 2005
       these hosts when they communicate with external hosts also
       employing IPsec (either directly or via another security gateway).
 
-   Security Parameters Index (SPI)
+   Security Parameters model.Index (SPI)
       An arbitrary 32-bit value that is used by a receiver to identify
       the SA to which an incoming packet should be bound.  For a unicast
       SA, the SPI can be used by itself to specify an SA, or it may be

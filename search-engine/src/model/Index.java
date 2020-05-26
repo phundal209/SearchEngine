@@ -1,3 +1,5 @@
+package model;
+
 import java.util.Objects;
 
 public class Index {
@@ -25,7 +27,7 @@ public class Index {
 
     @Override
     public String toString() {
-        return "Index{" +
+        return "model.Index{" +
                 "word='" + word + '\'' +
                 ", file='" + file + '\'' +
                 ", position=" + position +

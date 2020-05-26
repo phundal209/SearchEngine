@@ -1,0 +1,8 @@
+guten
+[filePath='/Users/phundal/SearchEngine/extended/pg11.txt', frequency= 22, position=46 }]
+internet
+[]
+path
+[]
+guten internet path
+[filePath='/Users/phundal/SearchEngine/extended/pg11.txt', frequency= 22, position=46 }]
